@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/Phuong-Hoang-Dai/DStore/handler"
+	"github.com/Phuong-Hoang-Dai/DStore/product"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -19,10 +20,12 @@ func main() {
 
 	dsn := os.Getenv("DB_CONN_STR")
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db.AutoMigrate(&product.Product{})
+
 	if err != nil {
 		log.Fatal("Error connecting database")
 	}
 	fmt.Println(db)
 
-	handler.SetupHttp()
+	handler.SetupHttp(db)
 }
