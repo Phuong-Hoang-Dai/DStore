@@ -7,23 +7,14 @@ import (
 )
 
 type Product struct {
-	Id        int            `json:"id" gorm:"primaryKey;autoIncrement"`
+	Id        int            `json:"id" gorm:"primaryKey;autoIncrement;<-:create"`
 	Name      string         `json:"name" gorm:"column:name"`
 	Desc      string         `json:"description" gorm:"column:description"`
-	Price     float32        `json:"price" gorm:"column:price"`
+	Price     float64        `json:"price" gorm:"column:price"`
 	Quantity  int            `json:"quantity" gorm:"column:quantity"`
-	OrderItem []OrderItem    `json:"items" gorm:"foreignKey:ProductId;references:Id"`
 	CreatedAt time.Time      `json:"create_at"`
 	UpdatedAt time.Time      `json:"update_at"`
 	DeletedAt gorm.DeletedAt `json:"delete_at" gorm:"index"`
-}
-
-type OrderItem struct {
-	ProductId      int  `json:"productId" gorm:"column:productId"`
-	Quantity       int  `json:"quantity" gorm:"column:quantity"`
-	OrderId        int  `json:"orderId" gorm:"column:orderId"`
-	IsConfirmed    bool `json:"is_conformed"`
-	IsUpdatedStock bool `json:"is_updated_stock"`
 }
 
 type Paging struct {
@@ -42,5 +33,3 @@ func (p *Paging) Process() {
 		p.Offset = 0
 	}
 }
-
-func (Product) GetTableName() string { return "Product" }

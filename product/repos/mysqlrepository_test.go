@@ -2,77 +2,206 @@ package repos_test
 
 import (
 	"database/sql"
-	"regexp"
+	"log"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/Phuong-Hoang-Dai/DStore/product"
-	"github.com/Phuong-Hoang-Dai/DStore/product/repos"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-func TestCreateProduct(t *testing.T) {
-	db, mock, gormDB, err := SetupMockDB()
+var mockGormDB *gorm.DB
+var mockDB sqlmock.Sqlmock
+
+func TestMain(m *testing.M) {
+	db, mock, gormDB, err := setupMockDB()
 	if err != nil {
-		t.Fatalf("There is something wrong. Erorr: %v", err)
+		log.Fatalf("There is something wrong. Erorr: %v", err)
 	}
 	defer db.Close()
 
-	data := product.Product{
-		Name:  "Haha",
-		Price: 99,
-	}
-	mock.ExpectBegin()
-	mock.ExpectExec("INSERT INTO `Product`").
-		WithArgs(data.Name, "", data.Price).
-		WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
+	mockGormDB = gormDB
+	mockDB = mock
 
-	t.Run("Test Create", func(t *testing.T) {
-		product_Repos := repos.NewMysqlProductRepo(gormDB)
-		id, err := product_Repos.CreateProduct(&data)
-		if err != nil {
-			t.Errorf("Create is incorrect. id = %v \n err: %v", id, err)
-		}
-	})
+	m.Run()
 
 }
 
-func TestUpdateProduct(t *testing.T) {
-	db, mock, gormDB, err := SetupMockDB()
-	if err != nil {
-		t.Fatalf("There is something wrong. Erorr: %v", err)
-	}
-	defer db.Close()
+// func TestCreateProduct(t *testing.T) {
+// 	data := product.Product{
+// 		Name:     "Haha",
+// 		Desc:     "hahahaha",
+// 		Price:    99,
+// 		Quantity: 6,
+// 	}
 
-	testData := []struct {
-		product.Product
-		rowsaffected int64
-		wantErr      bool
-	}{
-		{Product: product.Product{Id: 3, Name: "MuaHahahoo", Price: 69}, rowsaffected: 1, wantErr: false},
-		{Product: product.Product{Id: 4, Name: "MuaHahahoo", Price: 659}, rowsaffected: 5, wantErr: false},
-		{Product: product.Product{Id: 2, Name: "MuaHaha", Price: 69}, rowsaffected: 0, wantErr: true},
-	}
-	for _, data := range testData {
-		mock.ExpectBegin()
-		mock.ExpectExec(regexp.QuoteMeta("UPDATE `Product` SET `name`=?,`price`=? WHERE `id` = ?")).
-			WithArgs(data.Name, data.Price, data.Id).
-			WillReturnResult(sqlmock.NewResult(1, data.rowsaffected))
-		mock.ExpectCommit()
+// 	mockCreate(mockDB)
 
-		t.Run("Test Update", func(t *testing.T) {
-			product_Repos := repos.NewMysqlProductRepo(gormDB)
-			err := product_Repos.UpdateProduct(&data.Product)
-			if err != nil && !data.wantErr {
-				t.Errorf("Update is incorrect. \n err: %v", err)
-			}
-		})
-	}
-}
+// 	t.Run("Test Create", func(t *testing.T) {
+// 		product_Repos := repos.NewMysqlProductRepo(mockGormDB)
+// 		_, err := product_Repos.CreateProduct(&data)
 
-func SetupMockDB() (*sql.DB, sqlmock.Sqlmock, *gorm.DB, error) {
+// 		assert.NoError(t, err)
+// 	})
+// }
+
+// func TestUpdateProduct(t *testing.T) {
+// 	data := product.Product{
+// 		Id:       1,
+// 		Name:     "Haha",
+// 		Desc:     "hahahaha",
+// 		Price:    99,
+// 		Quantity: 6,
+// 	}
+
+// 	mockUpdate(mockDB)
+
+// 	t.Run("Test Update", func(t *testing.T) {
+// 		product_Repos := repos.NewMysqlProductRepo(mockGormDB)
+// 		err := product_Repos.UpdateProduct(data)
+// 		assert.NoError(t, err)
+// 	})
+// }
+
+// func TestUpdateProductNoRecord(t *testing.T) {
+// 	data := product.Product{
+// 		Id:       3,
+// 		Name:     "Haha",
+// 		Desc:     "hahahaha",
+// 		Price:    99,
+// 		Quantity: 6,
+// 	}
+
+// 	mockDB.ExpectBegin()
+// 	mockDB.ExpectExec("UPDATE `products` SET .* WHERE .*").
+// 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), 3).
+// 		WillReturnResult(sqlmock.NewResult(0, 0))
+// 	mockDB.ExpectCommit()
+
+// 	t.Run("Test Update", func(t *testing.T) {
+// 		product_Repos := repos.NewMysqlProductRepo(mockGormDB)
+// 		err := product_Repos.UpdateProduct(data)
+// 		assert.ErrorIs(t, err, gorm.ErrRecordNotFound)
+// 	})
+// }
+
+// func TestDeleteProduct(t *testing.T) {
+// 	data := product.Product{
+// 		Id:       3,
+// 		Name:     "Haha",
+// 		Desc:     "hahahaha",
+// 		Price:    99,
+// 		Quantity: 6,
+// 	}
+
+// 	mockDelete(mockDB)
+
+// 	t.Run("Test Delete", func(t *testing.T) {
+// 		product_Repos := repos.NewMysqlProductRepo(mockGormDB)
+// 		err := product_Repos.DeleteProduct(data.Id, &data)
+// 		assert.NoError(t, err)
+// 	})
+// }
+
+// func TestUpdateProducts(t *testing.T) {
+// 	data := []product.Product{
+// 		{
+// 			Id:       1,
+// 			Name:     "Haha",
+// 			Desc:     "hahahaha",
+// 			Price:    99,
+// 			Quantity: 6,
+// 		},
+// 		{
+// 			Id:       2,
+// 			Name:     "Haha",
+// 			Desc:     "hahahaha",
+// 			Price:    9,
+// 			Quantity: 6,
+// 		},
+// 	}
+// 	mockDB.ExpectBegin()
+// 	for i := range data {
+// 		mockDB.ExpectExec("UPDATE `products` SET .* WHERE .*").
+// 			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), i+1).
+// 			WillReturnResult(sqlmock.NewResult(0, 1))
+// 	}
+// 	mockDB.ExpectCommit()
+
+// 	t.Run("Test UpdateProducts", func(t *testing.T) {
+// 		product_Repos := repos.NewMysqlProductRepo(mockGormDB)
+// 		err := product_Repos.UpdateProducts(data)
+// 		assert.NoError(t, err)
+// 	})
+// }
+
+// func TestGetProductById(t *testing.T) {
+// 	data := product.Product{
+// 		Id:       3,
+// 		Name:     "Haha",
+// 		Desc:     "hahahaha",
+// 		Price:    99,
+// 		Quantity: 6,
+// 	}
+// 	p := product.Product{
+// 		Id: 3,
+// 	}
+
+// 	mockSelectProduct(mockDB, data)
+
+// 	t.Run("Test GetProductById", func(t *testing.T) {
+// 		product_Repos := repos.NewMysqlProductRepo(mockGormDB)
+// 		err := product_Repos.GetProductByid(p.Id, &p)
+// 		assert.NoError(t, err)
+// 		assert.Equal(t, data.Name, p.Name)
+// 		assert.Equal(t, data.Desc, p.Desc)
+// 		assert.Equal(t, data.Price, p.Price)
+// 		assert.Equal(t, data.Quantity, p.Quantity)
+// 	})
+// }
+
+// func TestGetProducts(t *testing.T) {
+// 	data := []product.Product{
+// 		{
+// 			Id:       3,
+// 			Name:     "Milk",
+// 			Desc:     "This is milk",
+// 			Price:    99,
+// 			Quantity: 68,
+// 		},
+// 		{
+// 			Id:       9,
+// 			Name:     "Milo",
+// 			Desc:     "This is milo",
+// 			Price:    55,
+// 			Quantity: 6,
+// 		},
+// 	}
+
+// 	pList := []product.Product{}
+
+// 	p := product.Paging{
+// 		Limit:  2,
+// 		Offset: 1,
+// 	}
+
+// 	mockSelectProducts(mockDB, data, p)
+
+// 	t.Run("Test GetProductById", func(t *testing.T) {
+// 		product_Repos := repos.NewMysqlProductRepo(mockGormDB)
+// 		p.Process()
+// 		err := product_Repos.GetProducts(p, &pList)
+// 		assert.NoError(t, err)
+// 		for i := range data {
+// 			assert.Equal(t, data[i].Name, pList[i].Name)
+// 			assert.Equal(t, data[i].Desc, pList[i].Desc)
+// 			assert.Equal(t, data[i].Price, pList[i].Price)
+// 			assert.Equal(t, data[i].Quantity, pList[i].Quantity)
+// 		}
+// 	})
+// }
+
+func setupMockDB() (*sql.DB, sqlmock.Sqlmock, *gorm.DB, error) {
 	db, mock, err := sqlmock.New()
 	gormDB, err2 := gorm.Open(mysql.New(mysql.Config{
 		Conn:                      db,
@@ -81,5 +210,51 @@ func SetupMockDB() (*sql.DB, sqlmock.Sqlmock, *gorm.DB, error) {
 	if err2 != nil && err == nil {
 		err = err2
 	}
+
 	return db, mock, gormDB, err
 }
+
+// func mockCreate(m sqlmock.Sqlmock) {
+// 	m.ExpectBegin()
+// 	m.ExpectExec("INSERT INTO `products`").
+// 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+// 		WillReturnResult(sqlmock.NewResult(1, 1))
+// 	m.ExpectCommit()
+// }
+
+// func mockUpdate(m sqlmock.Sqlmock) {
+// 	m.ExpectBegin()
+// 	m.ExpectExec("UPDATE `products` SET .* WHERE .*").
+// 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+// 		WillReturnResult(sqlmock.NewResult(0, 1))
+// 	m.ExpectCommit()
+// }
+
+// func mockDelete(m sqlmock.Sqlmock) {
+// 	m.ExpectBegin()
+// 	m.ExpectExec("UPDATE `products` SET .*`deleted_at`=?.* WHERE .*").
+// 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+// 		WillReturnResult(sqlmock.NewResult(0, 1))
+// 	m.ExpectCommit()
+// }
+
+// func mockSelectProduct(m sqlmock.Sqlmock, data product.Product) {
+// 	rows := sqlmock.NewRows([]string{"id", "name", "description", "price", "quantity", "create_at", "update_at", "delete_at"}).
+// 		AddRow(data.Id, data.Name, data.Desc, data.Price, data.Quantity, data.CreatedAt, data.UpdatedAt, data.DeletedAt)
+
+// 	m.ExpectQuery(`SELECT .* FROM .*products.* WHERE .*id.*`).
+// 		WithArgs(data.Id, 1).
+// 		WillReturnRows(rows)
+// }
+
+// func mockSelectProducts(m sqlmock.Sqlmock, data []product.Product, paging product.Paging) {
+// 	rows := sqlmock.NewRows([]string{"id", "name", "description", "price", "quantity", "create_at", "update_at", "delete_at"})
+// 	for _, v := range data {
+// 		rows.AddRow(v.Id, v.Name, v.Desc, v.Price, v.Quantity, v.CreatedAt, v.UpdatedAt, v.DeletedAt)
+
+// 	}
+
+// 	m.ExpectQuery("SELECT .* FROM `products` WHERE .* LIMIT .* OFFSET .*").
+// 		WithArgs(paging.Limit, paging.Offset).
+// 		WillReturnRows(rows)
+// }

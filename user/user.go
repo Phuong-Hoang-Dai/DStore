@@ -8,7 +8,7 @@ import (
 )
 
 type User struct {
-	Id              int       `json:"userId" gorm:"column:userId"`
+	Id              int       `json:"id" gorm:"column:id"`
 	Name            string    `json:"name" gorm:"column:name"`
 	Email           string    `json:"email" gorm:"column:email"`
 	Password        []byte    `json:"password"`
@@ -21,7 +21,7 @@ type User struct {
 }
 
 type WriteUser struct {
-	Id              int    `json:"userId" gorm:"column:userId"`
+	Id              int    `json:"id" gorm:"column:id"`
 	Name            string `json:"name" gorm:"column:name"`
 	Email           string `json:"email" gorm:"column:email"`
 	Password        []byte `json:"password"`
@@ -31,7 +31,7 @@ type WriteUser struct {
 }
 
 type DeleteUser struct {
-	Id        int       `json:"userId" gorm:"column:userId"`
+	Id        int       `json:"id" gorm:"column:id"`
 	Delete_at time.Time `json:"delete_at" gorm:"column:delete_at"`
 }
 

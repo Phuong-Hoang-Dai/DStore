@@ -18,37 +18,35 @@ func NewMysqlOrderRepo(db *gorm.DB) usecase.OrderRepository {
 }
 
 func (m mysqlOrderRepo) CreateOrder(data *order.Order) (int, error) {
-	result := m.DB.Create(&data)
+	result := m.DB.Create(data)
 
 	return data.Id, result.Error
 }
 
-func (m mysqlOrderRepo) GetOrderById(id int, data *order.Order) error {
-	result := m.DB.Table(order.OrderTableName).Preload("Items").First(&data, id)
+func (m mysqlOrderRepo) GetOrderById(id int) (data order.Order, err error) {
+	result := m.DB.Preload("Items").First(&data, id)
 
-	return result.Error
+	return data, result.Error
 }
 
-func (m mysqlOrderRepo) UpdateOrder(data *order.Order) error {
-	result := m.DB.Table(order.OrderTableName).Updates(&data)
+func (m mysqlOrderRepo) UpdateOrder(data order.Order) error {
+	result := m.DB.Updates(data)
 	if result.RowsAffected == 0 && result.Error == nil {
-		result.Error = gorm.ErrRecordNotFound
+		return gorm.ErrRecordNotFound
 	}
 	return result.Error
 }
 
-func (m mysqlOrderRepo) DeleteOrder(id int, data *order.Order) error {
-	result := m.DB.Table(order.OrderTableName).Where("id = ?", id).Delete(&data)
+func (m mysqlOrderRepo) DeleteOrder(id int) error {
+	result := m.DB.Delete(&order.Order{Id: id})
 	if result.RowsAffected == 0 && result.Error == nil {
-		result.Error = gorm.ErrRecordNotFound
+		return gorm.ErrRecordNotFound
 	}
 	return result.Error
 }
 
-func (m mysqlOrderRepo) GetOrders(pdata *[]order.Order) error {
-	//p.Process()
-	//result := m.DB.Table(product.ProductTableName).Limit(p.Limit).Offset(p.Offset).Find(data)
+func (m mysqlOrderRepo) GetOrders(p order.Paging) (orders []order.Order, err error) {
+	result := m.DB.Limit(p.Limit).Offset(p.Offset).Find(orders)
 
-	//return result.Error
-	return nil
+	return orders, result.Error
 }

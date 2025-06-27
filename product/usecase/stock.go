@@ -4,106 +4,105 @@ import (
 	"github.com/Phuong-Hoang-Dai/DStore/product"
 )
 
-func GetStock(data *[]product.OrderItem, repos ProductRepository) error {
-	resetStateItemOrder(data)
-	stock := make([]product.Product, len(*data), cap(*data))
-	canCreateOrder := true
+func CreateProduct(data product.Product, repos ProductRepos) (int, error) {
+	if id, err := repos.CreateProduct(&data); err != nil {
+		return 0, err
+	} else {
+		return id, err
+	}
+}
 
-	for i := range *data {
-		stock[i].Id = (*data)[i].ProductId
+func UpdateProduct(data product.Product, repos ProductRepos) error {
+	if err := repos.UpdateProduct(data); err != nil {
+		return err
+	} else {
+		return nil
+	}
+}
+
+func GetProducts(p *product.Paging, repos ProductRepos) (data []product.Product, err error) {
+	p.Process()
+	if data, err = repos.GetProducts(*p); err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+func GetProductById(id int, repos ProductRepos) (data product.Product, err error) {
+	if data, err := repos.GetProductById(id); err != nil {
+		return data, err
+	} else {
+		return data, nil
+	}
+}
+
+func DeleteProduct(id int, repos ProductRepos) error {
+	if err := repos.DeleteProduct(id); err != nil {
+		return err
+	} else {
+		return nil
+	}
+}
+
+func GetStock(data []OrderItemsDto, repos ProductRepos) error {
+	stock, err := getProducts(data, repos)
+	if err != nil {
+		return err
 	}
 
-	err := GetProductsById(&stock, repos)
+	for i := range data {
+		if canGetStock := data[i].Quantity <= stock[i].Quantity; canGetStock {
+			stock[i].Quantity -= data[i].Quantity
+		} else {
+			return product.ErrOutOfStock
+		}
+	}
+
+	if err := repos.UpdateProducts(stock); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func RestoreStock(data []OrderItemsDto, repos ProductRepos) error {
+	stock, err := getProducts(data, repos)
+	if err != nil {
+		return err
+	}
+
+	for i := range data {
+		stock[i].Quantity += (data)[i].Quantity
+	}
+
+	if err := repos.UpdateProducts(stock); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetPriceProduct(data *[]OrderItemsDto, repos ProductRepos) (err error) {
+	stock, err := getProducts(*data, repos)
 	if err != nil {
 		return err
 	}
 
 	for i := range *data {
-		if (*data)[i].IsConfirmed = (*data)[i].Quantity <= stock[i].Quantity; !(*data)[i].IsConfirmed {
-			canCreateOrder = false
-		}
-	}
-
-	if !canCreateOrder {
-		return product.ErrOutOfStock
-	}
-
-	for i := range *data {
-		stock[i].Quantity -= (*data)[i].Quantity
-		err := repos.UpdateProduct(&stock[i])
-		if err != nil {
-			return err
-		}
-
-		(*data)[i].IsUpdatedStock = true
+		(*data)[i].Price = stock[i].Price
 	}
 
 	return nil
 }
 
-func RestoreStock(data *[]product.OrderItem, repos ProductRepository) error {
-	resetStateItemOrder(data)
-	stock := make([]product.Product, len(*data), cap(*data))
+func getProducts(items []OrderItemsDto, repos ProductRepos) (stock []product.Product, err error) {
+	stock = make([]product.Product, len(items), cap(items))
 
-	for i := range *data {
-		stock[i].Id = (*data)[i].ProductId
-	}
-
-	err := GetProductsById(&stock, repos)
-	if err != nil {
-		return err
-	}
-
-	for i := range *data {
-		stock[i].Quantity += (*data)[i].Quantity
-		err := repos.UpdateProduct(&stock[i])
-		if err != nil {
-			return err
-		}
-		(*data)[i].IsUpdatedStock = true
-	}
-
-	return nil
-}
-
-func GetProductsById(data *[]product.Product, repos ProductRepository) error {
-	for i := range *data {
-		err := repos.GetProductByid((*data)[i].Id, &(*data)[i])
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func GetOrderTotal(data *[]product.OrderItem, repos ProductRepository) (float32, error) {
-	for i := range *data {
-		if !(*data)[i].IsConfirmed || !(*data)[i].IsUpdatedStock {
-			return 0.0, product.ErrOrderUnvalidated
+	for i := range items {
+		if stock[i], err = repos.GetProductById(items[i].ProductId); err != nil {
+			return nil, err
 		}
 	}
 
-	stock := make([]product.Product, len(*data), cap(*data))
-	for i := range *data {
-		stock[i].Id = (*data)[i].ProductId
-	}
-
-	err := GetProductsById(&stock, repos)
-	if err != nil {
-		return 0.0, err
-	}
-
-	var total float32
-	for i := range *data {
-		total += (stock[i].Price)
-	}
-
-	return total, nil
-}
-
-func resetStateItemOrder(data *[]product.OrderItem) {
-	for i := range *data {
-		(*data)[i].IsConfirmed = false
-		(*data)[i].IsUpdatedStock = false
-	}
+	return stock, err
 }
