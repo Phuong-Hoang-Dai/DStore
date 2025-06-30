@@ -4,8 +4,9 @@ import (
 	"errors"
 	"log"
 
-	"github.com/Phuong-Hoang-Dai/DStore/order"
-	"github.com/Phuong-Hoang-Dai/DStore/product"
+	"github.com/Phuong-Hoang-Dai/DStore/internal/order"
+	"github.com/Phuong-Hoang-Dai/DStore/internal/product"
+	"github.com/Phuong-Hoang-Dai/DStore/internal/user"
 	"gorm.io/gorm"
 )
 
@@ -46,6 +47,21 @@ func SeedData(db *gorm.DB) error {
 	}
 
 	if err := db.Create(&orderItems).Error; err != nil {
+		return err
+	}
+
+	user := []user.User{
+		{Name: "system", Email: "system@system.com", Role: "system"},
+		{Name: "admin1", Email: "admin@admin.com", Role: "admin"},
+	}
+
+	pw := []string{"systempw", "admin01"}
+
+	for i := range user {
+		user[i].SetHashPassword([]byte(pw[i]))
+	}
+
+	if err := db.Create(&user).Error; err != nil {
 		return err
 	}
 
