@@ -48,7 +48,7 @@ git clone https://github.com/Phuong-Hoang-Dai/DStore.git
 
 # 2. Start services
 docker-compose up --build
-
+```
 📚 API Endpoints
 
 - POST	 /api/v1/user	register new user
