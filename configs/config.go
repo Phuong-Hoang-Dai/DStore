@@ -1,7 +1,6 @@
 package configs
 
 import (
-	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -19,10 +18,7 @@ type Config struct {
 var Cfg Config
 
 func LoadConfig() {
-	err := godotenv.Load("../configs/.env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	godotenv.Load("../configs/.env")
 	Cfg = Config{
 		AppName:     os.Getenv("APP_NAME"),
 		ConnectStr:  os.Getenv("DB_CONN_STR"),

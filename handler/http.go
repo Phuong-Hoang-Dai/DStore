@@ -12,7 +12,7 @@ import (
 )
 
 func SetupHttp(db *gorm.DB) {
-	baseUrl := "http://localhost:8080/api/v1"
+	baseUrl := "http://localhost:8069/api/v1"
 	userService := userHttp.Init(db)
 	sysToken, err := userService.SetupJwtSystem()
 	if err != nil {
@@ -55,9 +55,9 @@ func SetupHttp(db *gorm.DB) {
 				order.GET("/history/:id", userService.RequireRole("user"), orderService.GetHistoryOrders())
 				order.DELETE("/:id", userService.RequireRole("user"), orderService.CancelOrder())
 				order.PUT("/:id", userService.RequireRole("admin", "system"), orderService.UpdateOrderState())
-				order.POST("/CompleteOrder/:id", userService.RequireRole("admin", "system"), orderService.CompleteOrder())
+				order.POST("/completeOrder/:id", userService.RequireRole("admin", "system"), orderService.CompleteOrder())
 			}
 		}
 	}
-	r.Run()
+	r.Run(":8069")
 }
