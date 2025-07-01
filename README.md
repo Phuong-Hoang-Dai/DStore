@@ -51,27 +51,27 @@ docker-compose up --build
 
 📚 API Endpoints
 
-POST	 /api/v1/user	register new user
-PUT    /api/v1/user/:id update info user
-DELETE /api/v1/user/:id soft delete user
-GET    /api/v1/user/:id get user by id
-GET    /api/v1/user?limit=?&offset=? get list users
-POST	 /api/v1/user/login	user login to get token JWT
+- POST	 /api/v1/user	register new user
+- PUT    /api/v1/user/:id update info user
+- DELETE /api/v1/user/:id soft delete user
+- GET    /api/v1/user/:id get user by id
+- GET    /api/v1/user?limit=?&offset=? get list users
+- POST	 /api/v1/user/login	user login to get token JWT
 
-GET	   /api/v1/product	get product list
-POST /api/v1/product/getstock decrease quantity for order
-POST /api/v1/product/restorestock increase quantity for canceled order
-GET /api/v1/product/:id get product info by id
-GET /api/v1/product?limit=?&offset=? get list products
-PUT /api/v1/product/:id update info product
-DELETE /api/v1/product/:id soft delete product
+- GET	   /api/v1/product	get product list
+- POST /api/v1/product/getstock decrease quantity for order
+- POST /api/v1/product/restorestock increase quantity for canceled order
+- GET /api/v1/product/:id get product info by id
+- GET /api/v1/product?limit=?&offset=? get list products
+- PUT /api/v1/product/:id update info product
+- DELETE /api/v1/product/:id soft delete product
 
-POST	 /api/v1/order	Place a new order with userId in token JWT 
-PUT	 /api/v1/order/:id	update state of order
-GET /api/v1/order/history/:id?limit=?&offset=? get order history by id user
-GET /api/v1/order/:id get order by id order
-GET /api/v1/order?limit=?&offset=? get list orders for admin
-DELETE /api/v1/order/:id cancel order
+- POST	 /api/v1/order	Place a new order with userId in token JWT 
+- PUT	 /api/v1/order/:id	update state of order
+- GET /api/v1/order/history/:id?limit=?&offset=? get order history by id user
+- GET /api/v1/order/:id get order by id order
+- GET /api/v1/order?limit=?&offset=? get list orders for admin
+- DELETE /api/v1/order/:id cancel order
 
 🔐 Authentication
 - Login returns a JWT token
@@ -86,7 +86,7 @@ DELETE /api/v1/order/:id cancel order
 - Api test with post man
 
 📈 Future Improvements
- Redis for caching
- CI/CD with GitHub Actions
- Message broker with rabbitmq
- Microservice
+ - Redis for caching
+ - CI/CD with GitHub Actions
+ - Message broker with rabbitmq
+ - Microservice
