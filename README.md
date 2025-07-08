@@ -34,7 +34,6 @@ Key design principles:
 - **MySQL** – Relational database
 - **Docker** – Containerization
 - **JWT** – Authentication
-- **Swagger** – API documentation
 
 ---
 
