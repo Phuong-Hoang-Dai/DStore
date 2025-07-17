@@ -46,3 +46,22 @@ func VerifyJwt(s string) (*jwt.Token, error) {
 
 	return token, nil
 }
+
+func RefreshToken(s string) (string, error) {
+	token, err := VerifyJwt(s)
+	if err != nil {
+		return "", err
+	}
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		userId := int(claims["sub"].(float64))
+		u := user.User{Id: userId, Role: claims["role"].(string)}
+
+		if r, err := GenerateJwt(u); err != nil {
+			return "", err
+		} else {
+			return r, nil
+		}
+	} else {
+		return "", user.ErrCannotReadRefreshToken
+	}
+}

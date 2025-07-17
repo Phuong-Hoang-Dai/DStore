@@ -48,9 +48,9 @@ func (u UserService) RequireRole(rqRole ...string) func(ctx *gin.Context) {
 
 func (u UserService) Authorize() func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		authHeader := ctx.GetHeader("Authorization")
-		if authHeader == "" {
-			responeError(http.StatusBadRequest, user.ErrAuthorizationHeaderMissing, ctx)
+		authHeader, err := ctx.Cookie("access_token")
+		if err != nil {
+			responeError(http.StatusBadRequest, user.ErrCookieMissing, ctx)
 			ctx.Abort()
 			return
 		}
@@ -90,6 +90,12 @@ func (u UserService) Login() func(ctx *gin.Context) {
 		if token, err := usecase.Login(data, u.userRepos); err != nil {
 			responeError(http.StatusBadRequest, err, ctx)
 		} else {
+			ctx.SetCookie(
+				"access_token", token, 12*60*60, "/", "localhost", false, true,
+			)
+			ctx.SetCookie(
+				"access_token", token, 12*60*60, "/", "localhost", false, true,
+			)
 			ctx.JSON(http.StatusOK, gin.H{
 				"token": token,
 			})

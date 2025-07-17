@@ -2,12 +2,14 @@ package handler
 
 import (
 	"log"
+	"time"
 
 	orderHttp "github.com/Phuong-Hoang-Dai/DStore/internal/order/deliveryhttp"
 	productHttp "github.com/Phuong-Hoang-Dai/DStore/internal/product/deliveryhttp"
 	userHttp "github.com/Phuong-Hoang-Dai/DStore/internal/user/deliveryhttp"
 	"gorm.io/gorm"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,6 +17,7 @@ func SetupHttp(db *gorm.DB) {
 	baseUrl := "http://localhost:8069/api/v1"
 	userService := userHttp.Init(db)
 	sysToken, err := userService.SetupJwtSystem()
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -22,6 +25,14 @@ func SetupHttp(db *gorm.DB) {
 	orderService := orderHttp.Init(db, baseUrl, sysToken)
 
 	r := gin.Default()
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 	api := r.Group("/api")
 	{
 		v1 := api.Group("/v1")
