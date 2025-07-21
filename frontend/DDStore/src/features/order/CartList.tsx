@@ -12,7 +12,7 @@ const CartList = () => {
     <SwiperSlide>
       <div className="flex flex-row items-center justify-around text-sm h-30 font-medium">
         <img
-          src="https://i.pinimg.com/736x/38/fc/24/38fc24f15d35c12092b8a3144c4378b1.jpg"
+          src="https://cdn.hstatic.net/products/1000288298/11498_dsc05320_47c7abb602c949308c1f2bc50c3af657_master.jpg"
           className="w-2/8 h-auto"
         ></img>
         <div className="w-4/8 flex flex-col justify-between h-1/2 text-start px-2">

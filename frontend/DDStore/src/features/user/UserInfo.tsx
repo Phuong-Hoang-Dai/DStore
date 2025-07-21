@@ -1,9 +1,9 @@
 import { FaRegUser } from "react-icons/fa";
-import { RemoveUser, selectUser, SetUser } from "./userReducer";
+import { RemoveUser, selectUser, SetUser } from "../auth/userReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import SignUpLogin from "./SignUpLogin";
-import { Logout, TryGetUserByCookie } from "./user_service";
+import { Logout, TryGetUserByCookie } from "../auth/user_service";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 
 const UserInfo = () => {

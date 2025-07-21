@@ -1,20 +1,17 @@
-import UserInfo from "../features/auth/UserInfo";
+import UserInfo from "../features/user/UserInfo";
 import Cart from "../features/order/Cart";
-import MainLayout from "../layouts/MainLayout";
 
 const NavBar = () => {
   return (
     <>
       <div className="bg-[#ecb996] h-15 md:h-20 w-full fixed z-1000">
-        <MainLayout>
-          <div className="flex flex-row h-full w-full justify-between items-center">
-            <img src="./logo.png" alt="" className="h-full" />
-            <div className="flex flex-row items-center h-full">
-              <UserInfo />
-              <Cart />
-            </div>
+        <div className="flex flex-row justify-between items-center h-full w-full md:w-9/10 lg:w-17/25 m-auto px-2">
+          <img src="./logo.png" alt="" className="h-full" />
+          <div className="flex flex-row items-center h-full">
+            <UserInfo />
+            <Cart />
           </div>
-        </MainLayout>
+        </div>
       </div>
       <div className="bg-[#ecb996] h-15 md:h-20 w-full"></div>
     </>

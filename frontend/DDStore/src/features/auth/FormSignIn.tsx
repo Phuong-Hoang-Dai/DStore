@@ -5,7 +5,7 @@ import { SignIn, TryGetUserByCookie } from "./user_service";
 import { useDispatch } from "react-redux";
 import { SetUser } from "./userReducer";
 
-const FormSignUp = () => {
+const FormSignIn = ({ IsForUser: IsForUse }: { IsForUser: boolean }) => {
   const dispatch = useDispatch();
   const [form, setForm] = useState({
     name: "",
@@ -64,8 +64,14 @@ const FormSignUp = () => {
         className="bg-white p-8 rounded-xl shadow-lg  w-md relative"
         onSubmit={(e) => handleSubmit(e)}
       >
-        <span className=" w-0 h-0 border-[10px] -z-10 -top-[20px] right-5 border-b-white border-t-transparent border-x-transparent  absolute"></span>
-        <span className=" w-[20px] h-0 border-b-[1px]  -z-10 border-solid top-0 right-20 border-white absolute"></span>
+        {IsForUse && (
+          <>
+            {" "}
+            <span className=" w-0 h-0 border-[10px] -z-10 -top-[20px] right-5 border-b-white border-t-transparent border-x-transparent  absolute"></span>
+            <span className=" w-[20px] h-0 border-b-[1px]  -z-10 border-solid top-0 right-20 border-white absolute"></span>
+          </>
+        )}
+
         <h2 className="text-2xl font-medium mb-6 text-center">
           Đăng nhập tài khoản
         </h2>
@@ -94,4 +100,4 @@ const FormSignUp = () => {
   );
 };
 
-export default FormSignUp;
+export default FormSignIn;

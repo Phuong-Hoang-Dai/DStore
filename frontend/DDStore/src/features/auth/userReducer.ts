@@ -11,6 +11,7 @@ const initialState: UserInfo = {
     id: 0,
     name: "",
     email: "",
+    roleId: ""
   },
 };
 
@@ -22,11 +23,13 @@ export const userReducer = createSlice({
       state.user.id = payload.payload.id
       state.user.name = payload.payload.name
       state.user.email = payload.payload.email
+      state.user.roleId = payload.payload.roleId
     },
     RemoveUser: (state: UserInfo) => {
       state.user.id = 0
       state.user.name = ""
       state.user.email = ""
+      state.user.roleId = ""
     }
   }
 })

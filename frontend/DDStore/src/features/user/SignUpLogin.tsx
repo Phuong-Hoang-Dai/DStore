@@ -1,5 +1,5 @@
-import FormSignUp from "./FormSignUp";
-import FormSignIn from "./FormSignIn";
+import FormSignUp from "../auth/FormSignUp";
+import FormSignIn from "../auth/FormSignIn";
 import { useEffect, useRef, useState } from "react";
 
 const SignUpLogin = () => {
@@ -61,7 +61,7 @@ const SignUpLogin = () => {
         </button>
         {isSignIn && (
           <div className="absolute top-20 -right-2 z-10" ref={refSigIn}>
-            <FormSignIn />
+            <FormSignIn IsForUser={true} />
           </div>
         )}
       </div>

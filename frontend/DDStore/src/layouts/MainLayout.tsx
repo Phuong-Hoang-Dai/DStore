@@ -1,10 +1,16 @@
-import { type ReactNode } from "react";
+import Header from "../components/NavBar";
+import { Outlet } from "react-router-dom";
 
-const MainLayout = ({ children }: { children: ReactNode }) => {
+const MainLayout = () => {
   return (
-    <div className="h-full w-full md:w-9/10 lg:w-17/25 m-auto px-2">
-      {children}
-    </div>
+    <>
+      <Header />
+      <div className=" bg-gray-100 h-auto w-full pb-10">
+        <div className="h-auto w-full md:w-9/10 lg:w-17/25 m-auto px-2 pt-5">
+          <Outlet />
+        </div>
+      </div>
+    </>
   );
 };
 
