@@ -1,8 +1,8 @@
-# 🛒 DStore API – Food Ordering System (Golang | Modular Monolith | Clean Architecture)
+# 🛒 DStore API – Food Ordering System (Golang | Microservice | Clean Architecture)
 
 ## 🚀 Overview
 
-**DStore** is a RESTful API service for managing food orders, built with **Go** using a **Modular Monolith architecture** and inspired by the **Clean Architecture** principles. It is designed for scalability, maintainability, and clean separation of concerns.
+**DStore** is a RESTful API service for managing food orders, built with **Go** using a **Microservice architecture** and inspired by the **Clean Architecture** principles. It is designed for scalability, maintainability, and clean separation of concerns.
 
 This project demonstrates my skills in backend architecture, domain-driven design, and practical implementation using popular tools and patterns.
 
@@ -10,13 +10,11 @@ This project demonstrates my skills in backend architecture, domain-driven desig
 
 ## 🧱 Project Structure
 
-The project is organized into independent modules/domains:
+The project is organized into services:
 
 - `product` – product catalog management  
 - `order` – customer order processing  
 - `user` – authentication(with JWT) & user management
-- `shared` – common utilities, configs
-
 
 Key design principles:
 - SOLID
